@@ -1,7 +1,7 @@
 package com.aldisued.iot.monitoring.controller;
 
 
-import com.aldisued.iot.monitoring.exception.SensorNotFoundException;
+import com.aldisued.iot.monitoring.exception.ResourceNotFoundException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -25,8 +25,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     throw exception;
   }
 
-  @ExceptionHandler(SensorNotFoundException.class)
-  public ProblemDetail handleSensorNotFound(SensorNotFoundException exception) {
+  @ExceptionHandler(ResourceNotFoundException.class)
+  public ProblemDetail handleResourceNotFound(ResourceNotFoundException exception) {
     return ProblemDetail.forStatusAndDetail(
         HttpStatus.NOT_FOUND,
         exception.getMessage()
