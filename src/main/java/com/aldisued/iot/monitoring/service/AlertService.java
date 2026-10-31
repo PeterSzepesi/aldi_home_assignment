@@ -2,6 +2,7 @@ package com.aldisued.iot.monitoring.service;
 
 import com.aldisued.iot.monitoring.dto.AlertDto;
 import com.aldisued.iot.monitoring.entity.Alert;
+import com.aldisued.iot.monitoring.entity.Sensor;
 import com.aldisued.iot.monitoring.exception.ResourceNotFoundException;
 import com.aldisued.iot.monitoring.repository.AlertRepository;
 import com.aldisued.iot.monitoring.repository.SensorRepository;
@@ -24,9 +25,33 @@ public class AlertService {
     this.kafkaTemplate = kafkaTemplate;
   }
 
+  @Transactional
   public Alert saveAlert(AlertDto alertDto) {
-    // TODO: Task 6
-    return null;
+    Sensor sensor = sensorRepository.findById(alertDto.sensorId())
+        .orElseThrow(() -> new ResourceNotFoundException(
+            "Sensor not found for ID: " + alertDto.sensorId()
+        ));
+
+    Alert alert = new Alert(
+        alertDto.message(),
+        alertDto.timestamp(),
+        sensor
+    );
+
+    sensor.getAlerts().add(alert);
+
+    Alert savedAlert = alertRepository.saveAndFlush(alert);
+
+    /* Few pitfalls here:
+    * DB commit failure can create published event without saved alert
+    * Publishing error on the other hand can create saved alert without corresponding publised event, since its done asynchronously
+    * Current tests not support the testing of these edge cases, leaving as is.
+    * */
+
+
+    kafkaTemplate.send("alerts", alertDto);
+
+    return savedAlert;
   }
 
   @Transactional(readOnly = true)
