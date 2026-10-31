@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface SensorReadingRepository extends JpaRepository<SensorReading, Long> {
@@ -23,4 +24,18 @@ public interface SensorReadingRepository extends JpaRepository<SensorReading, Lo
       @Param("from") LocalDateTime from,
       @Param("to")LocalDateTime to
       );
+
+  @Query("""
+        select reading.value
+        from SensorReading reading
+        where reading.sensor.type = :sensorType
+        and reading.timestamp >= :from
+        and reading.timestamp <= :to
+        order by reading.timestamp asc, reading.id asc
+        """)
+  List<Double> findMeasurementValuesBySensorType(
+      @Param("sensorType")SensorType sensorType,
+      @Param("from") LocalDateTime from,
+      @Param("to")LocalDateTime to
+  );
 }
