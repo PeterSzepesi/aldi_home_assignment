@@ -2,6 +2,7 @@ package com.aldisued.iot.monitoring.entity;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -20,6 +21,12 @@ public class Sensor {
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   private SensorType type;
+
+  @OneToMany(mappedBy = "sensor")
+  private List<SensorReading> sensorReadings = new ArrayList<>();
+
+  @OneToMany(mappedBy = "sensor")
+  private List<Alert> alerts = new ArrayList<>();
 
   public Sensor() {}
 
@@ -53,22 +60,20 @@ public class Sensor {
   }
 
   public List<Alert> getAlerts() {
-    //TODO: Task 2
-    return null;
+    return alerts;
   }
 
   public void setAlerts(List<Alert> alerts) {
-    //TODO: Task 2
+    this.alerts = alerts;
   }
 
   public List<SensorReading> getSensorReadings() {
-    //TODO: Task 2
-    return null;
+    return sensorReadings;
   }
 
   public void setSensorReadings(
       List<SensorReading> sensorReadings) {
-    //TODO: Task 2
+    this.sensorReadings = sensorReadings;
   }
 
   @Override
