@@ -7,7 +7,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-@Table(name = "sensors")
+@Table(name = "sensors",
+uniqueConstraints = @UniqueConstraint(
+    name = "uk_sensor_name",
+    columnNames = "name"
+))
 @Entity
 public class Sensor {
 

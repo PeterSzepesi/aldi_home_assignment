@@ -3,6 +3,7 @@ package com.aldisued.iot.monitoring.service;
 import com.aldisued.iot.monitoring.dto.SensorReadingDto;
 import com.aldisued.iot.monitoring.entity.Sensor;
 import com.aldisued.iot.monitoring.entity.SensorReading;
+import com.aldisued.iot.monitoring.exception.SensorNotFoundException;
 import com.aldisued.iot.monitoring.repository.SensorReadingRepository;
 import com.aldisued.iot.monitoring.repository.SensorRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -24,7 +25,7 @@ public class SensorReadingService {
   @Transactional
   public SensorReading saveSensorReading(SensorReadingDto sensorReadingDto) {
     Sensor sensor = sensorRepository.findById(sensorReadingDto.sensorId())
-        .orElseThrow(() -> new EntityNotFoundException("Sensor not found with ID: " + sensorReadingDto.sensorId()));
+        .orElseThrow(() -> new SensorNotFoundException(sensorReadingDto.sensorId()));
 
     SensorReading sensorReading = new SensorReading(
         sensorReadingDto.value(),
