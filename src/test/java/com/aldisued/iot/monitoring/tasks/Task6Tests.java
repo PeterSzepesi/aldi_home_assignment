@@ -1,6 +1,8 @@
 package com.aldisued.iot.monitoring.tasks;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 import com.aldisued.iot.monitoring.IntegrationTestBase;
 import com.aldisued.iot.monitoring.dto.AlertDto;
@@ -10,9 +12,12 @@ import com.aldisued.iot.monitoring.service.AlertService;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +41,13 @@ public class Task6Tests extends IntegrationTestBase {
 
   @MockitoBean
   private KafkaTemplate<String, AlertDto> kafkaTemplate;
+
+  //simulates a successful Kafka send
+  @BeforeEach
+  void configureSuccessfulPublication() {
+    when(kafkaTemplate.send(eq("alerts"), any(AlertDto.class)))
+        .thenReturn(CompletableFuture.completedFuture(null));
+  }
 
   @AfterEach
   public void cleanup() {

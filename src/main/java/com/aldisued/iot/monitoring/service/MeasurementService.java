@@ -60,5 +60,4 @@ public class MeasurementService {
   //Sidenotes: Both of these could be solved by Java streams, but for millions/tens of millions of records, loading the complete entities from DB would be costly.
   // DB indexing could further improve sensor reading lookup
   // for task 8 since there could be millions of readings per type pagination might also be useful. Fractional seconds in case of sensors might also be an edge case
-
 }

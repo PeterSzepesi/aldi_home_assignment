@@ -6,10 +6,14 @@ import com.aldisued.iot.monitoring.entity.SensorReading;
 import com.aldisued.iot.monitoring.exception.ResourceNotFoundException;
 import com.aldisued.iot.monitoring.repository.SensorReadingRepository;
 import com.aldisued.iot.monitoring.repository.SensorRepository;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 @Service
+@Validated
 public class SensorReadingService {
 
   private final SensorReadingRepository sensorReadingRepository;
@@ -22,7 +26,7 @@ public class SensorReadingService {
   }
 
   @Transactional
-  public SensorReading saveSensorReading(SensorReadingDto sensorReadingDto) {
+  public SensorReading saveSensorReading(@NotNull @Valid SensorReadingDto sensorReadingDto) {
     Sensor sensor = sensorRepository.findById(sensorReadingDto.sensorId())
         .orElseThrow(() -> new ResourceNotFoundException("Sensor not found for ID: " + sensorReadingDto.sensorId()));
 
@@ -32,9 +36,8 @@ public class SensorReadingService {
         sensor
     );
 
-    sensor.getSensorReadings().add(sensorReading);
+    sensor.addSensorReading(sensorReading);
 
     return sensorReadingRepository.save(sensorReading);
   }
-
 }

@@ -79,5 +79,4 @@ public class MeasurementCalculatorService {
 
     return List.copyOf(averages);
   }
-
 }

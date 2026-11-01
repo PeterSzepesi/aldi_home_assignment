@@ -80,6 +80,19 @@ public class Sensor {
     this.sensorReadings = sensorReadings;
   }
 
+  //setting both sides here for self-containment, sensor reading side is unneccessary because of its constructor overload but harmless
+  public void addSensorReading(SensorReading sensorReading) {
+    Objects.requireNonNull(sensorReading, "Reading can't be null");
+    sensorReading.setSensor(this);
+    sensorReadings.add(sensorReading);
+  }
+
+  public void addAlert(Alert alert) {
+    Objects.requireNonNull(alert, "Alert can't be null");
+    alert.setSensor(this);
+    alerts.add(alert);
+  }
+
   @Override
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) {
