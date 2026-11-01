@@ -1,8 +1,10 @@
 package com.aldisued.iot.monitoring.controller;
 
 import com.aldisued.iot.monitoring.dto.SensorReadingDto;
+import com.aldisued.iot.monitoring.dto.SensorReadingResponse;
 import com.aldisued.iot.monitoring.entity.SensorReading;
 import com.aldisued.iot.monitoring.service.SensorReadingService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +21,14 @@ public class SensorReadingController {
   }
 
   @PostMapping
-  public SensorReading saveSensorReading(@RequestBody SensorReadingDto sensorReadingDto) {
-    return sensorReadingService.saveSensorReading(sensorReadingDto);
+  public SensorReadingResponse saveSensorReading(@Valid @RequestBody SensorReadingDto sensorReadingDto) {
+    SensorReading saved = sensorReadingService.saveSensorReading(sensorReadingDto);
+
+    return new SensorReadingResponse(
+        saved.getId(),
+        saved.getSensor().getId(),
+        saved.getValue(),
+        saved.getTimestamp()
+    );
   }
 }

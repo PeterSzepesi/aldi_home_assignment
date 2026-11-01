@@ -1,16 +1,17 @@
 package com.aldisued.iot.monitoring.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-@Table(name = "sensors")
+@Table(name = "sensors",
+uniqueConstraints = @UniqueConstraint(
+    name = "uk_sensor_name",
+    columnNames = "name"
+))
 @Entity
 public class Sensor {
 
@@ -22,7 +23,14 @@ public class Sensor {
   private String name;
 
   @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
   private SensorType type;
+
+  @OneToMany(mappedBy = "sensor")
+  private List<SensorReading> sensorReadings = new ArrayList<>();
+
+  @OneToMany(mappedBy = "sensor")
+  private List<Alert> alerts = new ArrayList<>();
 
   public Sensor() {}
 
@@ -56,22 +64,33 @@ public class Sensor {
   }
 
   public List<Alert> getAlerts() {
-    //TODO: Task 2
-    return null;
+    return alerts;
   }
 
   public void setAlerts(List<Alert> alerts) {
-    //TODO: Task 2
+    this.alerts = alerts;
   }
 
   public List<SensorReading> getSensorReadings() {
-    //TODO: Task 2
-    return null;
+    return sensorReadings;
   }
 
   public void setSensorReadings(
       List<SensorReading> sensorReadings) {
-    //TODO: Task 2
+    this.sensorReadings = sensorReadings;
+  }
+
+  //setting both sides here for self-containment, sensor reading side is unneccessary because of its constructor overload but harmless
+  public void addSensorReading(SensorReading sensorReading) {
+    Objects.requireNonNull(sensorReading, "Reading can't be null");
+    sensorReading.setSensor(this);
+    sensorReadings.add(sensorReading);
+  }
+
+  public void addAlert(Alert alert) {
+    Objects.requireNonNull(alert, "Alert can't be null");
+    alert.setSensor(this);
+    alerts.add(alert);
   }
 
   @Override
