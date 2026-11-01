@@ -1,6 +1,7 @@
 package com.aldisued.iot.monitoring.service;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
@@ -39,8 +40,44 @@ public class MeasurementCalculatorService {
   }
 
   public List<Double> getMovingAverage(List<Double> data, int windowSize) {
-    // TODO: Task 10
-    return List.of();
+    //rolling window, rolling sum
+    if(data == null) {
+      throw new IllegalArgumentException("Data cant be null");
+    }
+
+    if(windowSize <= 0 || windowSize > data.size()) {
+      throw new IllegalArgumentException("Window size must be between 1 and the number of data elements");
+    }
+
+    double[] values = data.stream()
+        .mapToDouble(v -> {
+          if(v == null || !Double.isFinite(v)) {
+            throw new IllegalArgumentException("Data measurements must be finite numbers");
+          }
+          return v;
+        })
+        .toArray();
+
+    if(windowSize == 1) {
+      return  List.copyOf(data);
+    }
+
+    List<Double> averages = new ArrayList<>();
+    double windowSum = 0.0;
+
+    for(int i = 0; i < values.length; i++) {
+      if(i >= windowSize) {
+        windowSum -= values[i - windowSize];
+      }
+
+      windowSum += values[i];
+
+      if(i >= windowSize - 1){
+        averages.add(windowSum/windowSize);
+      }
+    }
+
+    return List.copyOf(averages);
   }
 
 }
